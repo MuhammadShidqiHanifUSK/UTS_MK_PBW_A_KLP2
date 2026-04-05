@@ -427,3 +427,51 @@ function showDetail(novelId) {
   showPage("detail");
 }
 
+function renderChapterList(order) {
+  const sorted = [...currentNovel.chapterList].sort((a, b) =>
+    order === "asc" ? a.id - b.id : b.id - a.id,
+  );
+  document.getElementById("chapterSection").innerHTML = `
+        <div class="chapter-header">
+            <h3>📋 Daftar Chapter <span class="chapter-count">${sorted.length}</span></h3>
+            <div class="chapter-sort">
+                <button class="${order === "asc" ? "active" : ""}" onclick="renderChapterList('asc'); this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active');">Terlama</button>
+                <button class="${order === "desc" ? "active" : ""}" onclick="renderChapterList('desc'); this.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); this.classList.add('active');">Terbaru</button>
+            </div>
+        </div>
+        <div class="chapter-list" id="chapterList">
+            ${sorted
+              .map(
+                (ch) => `
+                <div class="chapter-item ${ch.read ? "read" : ""}" onclick="startReading(${currentNovel.id}, ${ch.id})">
+                    <div class="chapter-item-left">
+                        <div class="chapter-number">${ch.id}</div>
+                        <div class="chapter-item-info">
+                            <h4>${ch.title}</h4>
+                            <p>${ch.date} ${ch.read ? "• ✅ Dibaca" : ""}</p>
+                        </div>
+                    </div>
+                    <div class="chapter-item-right">
+                        <button class="chapter-bookmark" onclick="event.stopPropagation(); toggleChapterBookmark(this)">🔖</button>
+                        →
+                    </div>
+                </div>
+            `,
+              )
+              .join("")}
+        </div>
+    `;
+}
+
+function toggleSynopsis(btn) {
+  const text = document.getElementById("synopsisText");
+  if (text.textContent === currentNovel.synopsis) {
+    text.textContent = currentNovel.synopsisFull;
+    btn.textContent = "Sembunyikan";
+  } else {
+    text.textContent = currentNovel.synopsis;
+    btn.textContent = "Baca selengkapnya";
+  }
+}
+
+
