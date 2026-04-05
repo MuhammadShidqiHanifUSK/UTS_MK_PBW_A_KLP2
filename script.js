@@ -563,3 +563,91 @@ function changeReaderTheme(bg, text, el) {
   el.classList.add("active");
 }
 
+// ============================================
+// COMMENTS
+// ============================================
+function renderComments(novelId, chapterId) {
+  const key = `${novelId}-${chapterId}`;
+  const comments = commentsData[key] || [];
+  document.getElementById("commentSection").innerHTML = `
+        <h3>💬 Komentar <span style="color: var(--text-lighter); font-weight: 400;">(${comments.length})</span></h3>
+        <div class="comment-form">
+            <div class="comment-avatar">U</div>
+            <div class="comment-input-wrapper">
+                <textarea class="comment-input" id="commentInput" rows="3" placeholder="Tulis komentar..."></textarea>
+                <div class="comment-actions">
+                    <button class="comment-submit" onclick="addComment(${novelId}, ${chapterId})">Kirim 💬</button>
+                </div>
+            </div>
+        </div>
+        <div class="comments-list">
+            ${comments
+              .map(
+                (c, i) => `
+                <div class="comment-item">
+                    <div class="comment-avatar">${c.avatar}</div>
+                    <div class="comment-body">
+                        <div class="comment-header"><span class="comment-name">${c.name}</span><span class="comment-time">${c.time}</span></div>
+                        <p class="comment-text">${c.text}</p>
+                        <div class="comment-footer">
+                            <button class="comment-action" onclick="likeComment(this, ${i})">❤️ <span>${c.likes}</span></button>
+                            <button class="comment-action">💬 Balas</button>
+                        </div>
+                    </div>
+                </div>
+            `,
+              )
+              .join("")}
+        </div>
+    `;
+}
+
+function addComment(novelId, chapterId) {
+  const input = document.getElementById("commentInput");
+  const text = input.value.trim();
+  if (!text) {
+    showToast("Tulis komentar terlebih dahulu!", "error");
+    return;
+  }
+
+  const key = `${novelId}-${chapterId}`;
+  if (!commentsData[key]) commentsData[key] = [];
+  commentsData[key].unshift({
+    name: "Kamu",
+    avatar: "K",
+    text,
+    time: "Baru saja",
+    likes: 0,
+  });
+  renderComments(novelId, chapterId);
+  showToast("Komentar berhasil ditambahkan! ✨", "success");
+}
+
+function likeComment(btn, index) {
+  btn.classList.toggle("liked-comment");
+  const countEl = btn.querySelector("span");
+  countEl.textContent = btn.classList.contains("liked-comment")
+    ? parseInt(countEl.textContent) + 1
+    : parseInt(countEl.textContent) - 1;
+}
+
+// ============================================
+// INTERACTIONS
+// ============================================
+function toggleLike(novelId, btn) {
+  const idx = likedNovels.indexOf(novelId);
+  if (idx > -1) {
+    likedNovels.splice(idx, 1);
+    btn.classList.remove("liked");
+    btn.innerHTML = "🤍";
+    showToast("Dihapus dari favorit", "error");
+  } else {
+    likedNovels.push(novelId);
+    btn.classList.add("liked");
+    btn.innerHTML = "❤️";
+    showToast("Ditambahkan ke favorit! ❤️", "success");
+  }
+  localStorage.setItem("novelku_likes", JSON.stringify(likedNovels));
+}
+
+
