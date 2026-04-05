@@ -529,4 +529,37 @@ function nextChapter(novelId) {
     startReading(novelId, currentChapter + 1);
 }
 
+function toggleReaderSettings() {
+  readerSettingsOpen = !readerSettingsOpen;
+  document
+    .getElementById("readerSettingsPanel")
+    .classList.toggle("active", readerSettingsOpen);
+}
+
+function changeFontSize(delta) {
+  readerFontSize = Math.max(14, Math.min(28, readerFontSize + delta));
+  document.documentElement.style.setProperty(
+    "--reader-size",
+    readerFontSize + "px",
+  );
+  document.getElementById("fontSizeDisplay").textContent =
+    readerFontSize + "px";
+}
+
+function changeFontFamily(font, btn) {
+  document.documentElement.style.setProperty("--reader-font", font);
+  document
+    .querySelectorAll(".font-option")
+    .forEach((b) => b.classList.remove("active"));
+  btn.classList.add("active");
+}
+
+function changeReaderTheme(bg, text, el) {
+  document.documentElement.style.setProperty("--reader-bg", bg);
+  document.documentElement.style.setProperty("--reader-text", text);
+  document
+    .querySelectorAll(".theme-option")
+    .forEach((t) => t.classList.remove("active"));
+  el.classList.add("active");
+}
 
