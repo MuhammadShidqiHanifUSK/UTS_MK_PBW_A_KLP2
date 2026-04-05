@@ -650,4 +650,150 @@ function toggleLike(novelId, btn) {
   localStorage.setItem("novelku_likes", JSON.stringify(likedNovels));
 }
 
+function toggleLikeDetail(novelId, btn) {
+  const idx = likedNovels.indexOf(novelId);
+  if (idx > -1) {
+    likedNovels.splice(idx, 1);
+    btn.innerHTML = "🤍 Suka";
+    showToast("Dihapus dari favorit", "error");
+  } else {
+    likedNovels.push(novelId);
+    btn.innerHTML = "❤️ Disukai";
+    showToast("Ditambahkan ke favorit! ❤️", "success");
+  }
+  localStorage.setItem("novelku_likes", JSON.stringify(likedNovels));
+}
+
+function toggleBookmark(novelId) {
+  const idx = bookmarks.indexOf(novelId);
+  if (idx > -1) {
+    bookmarks.splice(idx, 1);
+    showToast("Bookmark dihapus", "error");
+  } else {
+    bookmarks.push(novelId);
+    showToast("Novel ditambahkan ke bookmark! 🔖", "success");
+  }
+  localStorage.setItem("novelku_bookmarks", JSON.stringify(bookmarks));
+  updateBookmarkCount();
+  renderBookmarkPanel();
+}
+
+function toggleChapterBookmark(btn) {
+  btn.classList.toggle("saved");
+  showToast(
+    btn.classList.contains("saved")
+      ? "Chapter di-bookmark! 🔖"
+      : "Bookmark chapter dihapus",
+    "success",
+  );
+}
+
+function updateBookmarkCount() {
+  document.getElementById("bookmarkCount").textContent = bookmarks.length;
+}
+
+function toggleBookmarkPanel() {
+  const panel = document.getElementById("bookmarkPanel");
+  const overlay = document.getElementById("overlayBg");
+  const isActive = !panel.classList.contains("active");
+  panel.classList.toggle("active", isActive);
+  overlay.classList.toggle("active", isActive);
+  if (isActive) renderBookmarkPanel();
+}
+
+function renderBookmarkPanel() {
+  const container = document.getElementById("bookmarkList");
+  if (bookmarks.length === 0) {
+    container.innerHTML = `<div class="bookmark-empty"><span>📚</span><p>Belum ada bookmark</p></div>`;
+    return;
+  }
+  container.innerHTML = bookmarks
+    .map((id) => {
+      const novel = novelsData.find((n) => n.id === id);
+      return `
+            <div class="bookmark-item" onclick="showDetail(${novel.id}); toggleBookmarkPanel();">
+                <div class="bookmark-item-cover" style="background: ${novel.gradient}; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: white;">${novel.emoji}</div>
+                <div class="bookmark-item-info"><h4>${novel.title}</h4><p>${novel.genre} • ⭐ ${novel.rating}</p><p>${novel.chapters} Chapter</p></div>
+            </div>
+        `;
+    })
+    .join("");
+}
+
+// ============================================
+// SEARCH & THEME & TOAST
+// ============================================
+function toggleSearch() {
+  document.getElementById("searchOverlay").classList.toggle("active");
+  if (document.getElementById("searchOverlay").classList.contains("active")) {
+    setTimeout(() => document.getElementById("searchInput").focus(), 300);
+  }
+}
+
+function closeSearch(e) {
+  if (e.target.id === "searchOverlay") {
+    document.getElementById("searchOverlay").classList.remove("active");
+    document.getElementById("searchInput").value = "";
+  }
+}
+
+function handleSearch(query) {
+  const container = document.getElementById("searchResults");
+  if (!query.trim()) {
+    container.innerHTML = "";
+    return;
+  }
+  const results = novelsData.filter(
+    (n) =>
+      n.title.toLowerCase().includes(query.toLowerCase()) ||
+      n.author.toLowerCase().includes(query.toLowerCase()) ||
+      n.genre.toLowerCase().includes(query.toLowerCase()),
+  );
+  container.innerHTML =
+    results.length === 0
+      ? `<div style="padding: 20px; text-align: center; color: var(--text-lighter);">Tidak ditemukan hasil untuk "${query}"</div>`
+      : results
+          .map(
+            (novel) => `
+            <div class="search-result-item" onclick="showDetail(${novel.id}); document.getElementById('searchOverlay').classList.remove('active');">
+                <div class="search-result-cover" style="background: ${novel.gradient}; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem;">${novel.emoji}</div>
+                <div class="search-result-info"><h4>${novel.title}</h4><p>${novel.author} • ${novel.genre} • ⭐ ${novel.rating}</p></div>
+            </div>
+        `,
+          )
+          .join("");
+}
+
+function toggleTheme() {
+  document.body.classList.toggle("dark-mode");
+  const isDark = document.body.classList.contains("dark-mode");
+  document.getElementById("themeBtn").textContent = isDark ? "☀️" : "🌙";
+  showToast(
+    isDark ? "Mode gelap diaktifkan 🌙" : "Mode terang diaktifkan ☀️",
+    "success",
+  );
+}
+
+function toggleMobileMenu() {
+  const menu = document.getElementById("mobileMenu");
+  const overlay = document.getElementById("mobileMenuOverlay");
+  const btn = document.querySelector(".menu-toggle");
+  const isActive = menu.classList.contains("active");
+
+  menu.classList.toggle("active", !isActive);
+  overlay.classList.toggle("active", !isActive);
+  btn.classList.toggle("active", !isActive);
+  document.body.style.overflow = isActive ? "" : "hidden"; // Stop scroll saat menu buka
+}
+
+function showToast(message, type = "success") {
+  const container = document.getElementById("toastContainer");
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `<span class="toast-icon">${type === "success" ? "✅" : "❌"}</span><span class="toast-message">${message}</span>`;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+
 
