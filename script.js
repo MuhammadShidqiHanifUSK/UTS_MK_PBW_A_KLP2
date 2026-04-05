@@ -473,5 +473,33 @@ function toggleSynopsis(btn) {
     btn.textContent = "Baca selengkapnya";
   }
 }
+function startReading(novelId, chapterId) {
+  currentNovel = novelsData.find((n) => n.id === novelId);
+  currentChapter = chapterId;
+  const content = generateChapterContent(novelId, chapterId);
+
+  document.getElementById("readerContainer").innerHTML = `
+        <div class="reader-nav">
+            <button class="reader-back" onclick="showDetail(${novelId})">← Kembali</button>
+            <span class="reader-chapter-title">${content.title}</span>
+            <div class="reader-settings">
+                <button onclick="toggleReaderSettings()" title="Pengaturan">⚙️</button>
+            </div>
+        </div>
+        <div class="reader-progress"><div class="reader-progress-bar" id="readerProgressBar"></div></div>
+        <div class="reader-content" id="readerContent">
+            <h2>${content.title}</h2>
+            <div class="chapter-date">📅 ${content.date}</div>
+            <div class="reader-text" id="readerText">${content.text.map((p) => `<p>${p}</p>`).join("")}</div>
+        </div>
+        <div class="reader-nav-bottom">
+            <button class="reader-nav-btn" onclick="prevChapter(${novelId})" ${chapterId <= 1 ? "disabled" : ""}>
+                <span>← Sebelumnya</span><strong>Chapter ${chapterId > 1 ? chapterId - 1 : "-"}</strong>
+            </button>
+            <button class="reader-nav-btn" onclick="nextChapter(${novelId})" ${chapterId >= currentNovel.chapterList.length ? "disabled" : ""}>
+                <span>Selanjutnya →</span><strong>Chapter ${chapterId < currentNovel.chapterList.length ? chapterId + 1 : "-"}</strong>
+            </button>
+        </div>
+    `;
 
 
