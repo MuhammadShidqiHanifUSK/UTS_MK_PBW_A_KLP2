@@ -389,3 +389,41 @@ function toggleSidebarMenu() {
   // Stop scroll body saat sidebar terbuka
   document.body.style.overflow = isActive ? "" : "hidden";
 }
+
+function showDetail(novelId) {
+  currentNovel = novelsData.find((n) => n.id === novelId);
+  if (!currentNovel) return;
+
+  document.getElementById("detailHero").innerHTML = `
+        <div class="detail-cover" style="background: ${currentNovel.gradient}">${currentNovel.emoji}</div>
+        <div class="detail-info">
+            <span class="detail-genre">${currentNovel.genre}</span>
+            <h1 class="detail-title">${currentNovel.title}</h1>
+            <p class="detail-author">oleh <strong>${currentNovel.author}</strong></p>
+            <div class="detail-stats">
+                <div class="detail-stat"><div class="detail-stat-value">⭐ ${currentNovel.rating}</div><div class="detail-stat-label">Rating</div></div>
+                <div class="detail-stat"><div class="detail-stat-value">👁 ${currentNovel.readers}</div><div class="detail-stat-label">Pembaca</div></div>
+                <div class="detail-stat"><div class="detail-stat-value">📝 ${currentNovel.chapters}</div><div class="detail-stat-label">Chapter</div></div>
+                <div class="detail-stat"><div class="detail-stat-value">${currentNovel.status === "Completed" ? "✅" : "📖"} ${currentNovel.status}</div><div class="detail-stat-label">Status</div></div>
+            </div>
+            <div class="detail-actions">
+                <button class="btn-primary" onclick="startReading(${currentNovel.id}, 1)">📖 Baca Sekarang</button>
+                <button class="btn-secondary" onclick="toggleBookmark(${currentNovel.id})">
+                    ${bookmarks.includes(currentNovel.id) ? "🔖 Tersimpan" : "🔖 Bookmark"}
+                </button>
+                <button class="btn-secondary" onclick="toggleLikeDetail(${currentNovel.id}, this)">
+                    ${likedNovels.includes(currentNovel.id) ? "❤️ Disukai" : "🤍 Suka"}
+                </button>
+            </div>
+            <div class="detail-synopsis">
+                <h3>Sinopsis</h3>
+                <p id="synopsisText">${currentNovel.synopsis}</p>
+                <button class="read-more-btn" onclick="toggleSynopsis(this)">Baca selengkapnya</button>
+            </div>
+        </div>
+    `;
+
+  renderChapterList("asc");
+  showPage("detail");
+}
+
