@@ -130,3 +130,203 @@ function generateChapterContent(novelId, chapterId) {
     ],
   };
 }
+
+let bookmarks = JSON.parse(localStorage.getItem("novelku_bookmarks") || "[]");
+let likedNovels = JSON.parse(localStorage.getItem("novelku_likes") || "[]");
+let currentNovel = null;
+let currentChapter = null;
+let currentCategory = "Semua";
+let readerFontSize = 18;
+let readerSettingsOpen = false;
+const commentsData = {
+  "0-1": [
+    {
+      name: "Rizky",
+      avatar: "R",
+      text: "Wah, awal yang keren banget! Penasaran sama kelanjutannya 🔥",
+      time: "2 jam lalu",
+      likes: 12,
+    },
+    {
+      name: "Sari",
+      avatar: "S",
+      text: "Arya karakter yang menarik. Master Zephyr pasti punya rahasia ya?",
+      time: "1 jam lalu",
+      likes: 8,
+    },
+  ],
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(
+    () => document.getElementById("loadingOverlay").classList.add("hidden"),
+    800,
+  );
+
+  renderPopularScroll();
+  renderNovelGrid("Semua");
+  renderCategoryTabs();
+  renderPopularFull();
+  renderGenrePage();
+  updateBookmarkCount();
+
+  window.addEventListener("scroll", () => {
+    document
+      .getElementById("navbar")
+      .classList.toggle("scrolled", window.scrollY > 10);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      document.getElementById("searchOverlay").classList.remove("active");
+      document.getElementById("bookmarkPanel").classList.remove("active");
+      document.getElementById("overlayBg").classList.remove("active");
+      document.getElementById("readerSettingsPanel").classList.remove("active");
+      document.getElementById("sidebarMenu").classList.remove("active");
+      document.getElementById("sidebarOverlay").classList.remove("active");
+      document.getElementById("menuToggle").classList.remove("active");
+      document.body.style.overflow = "";
+      readerSettingsOpen = false;
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+      e.preventDefault();
+      toggleSearch();
+    }
+  });
+});
+
+function showPage(page) {
+  document
+    .querySelectorAll(".page")
+    .forEach((p) => p.classList.remove("active"));
+  document.getElementById(`page-${page}`).classList.add("active");
+  document
+    .querySelectorAll(".nav-links a")
+    .forEach((a) => a.classList.remove("active"));
+  const navLink = document.getElementById(`nav-${page}`);
+  if (navLink) navLink.classList.add("active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function renderCategoryTabs() {
+  const genres = ["Semua", "Fantasi", "Action", "Romance", "Mystery", "Sci-Fi"];
+  document.getElementById("categoryTabs").innerHTML = genres
+    .map(
+      (g) =>
+        `<button class="category-tab ${g === "Semua" ? "active" : ""}" onclick="filterCategory('${g}', this)">${g}</button>`,
+    )
+    .join("");
+}
+
+function filterCategory(category, btn) {
+  currentCategory = category;
+  document
+    .querySelectorAll(".category-tab")
+    .forEach((t) => t.classList.remove("active"));
+  btn.classList.add("active");
+  renderNovelGrid(category);
+}
+
+function renderNovelGrid(category) {
+  const filtered =
+    category === "Semua"
+      ? novelsData
+      : novelsData.filter((n) => n.genre === category);
+  document.getElementById("novelGrid").innerHTML = filtered
+    .map(
+      (novel, i) => `
+        <div class="novel-card fade-in stagger-${(i % 5) + 1}" onclick="showDetail(${novel.id})">
+            <div class="novel-cover">
+                <div class="novel-cover-img" style="background: ${novel.gradient}">${novel.emoji}</div>
+                ${novel.badge ? `<span class="novel-badge badge-${novel.badge}">${novel.badge === "hot" ? "🔥 HOT" : novel.badge === "new" ? "✨ NEW" : "✅ TAMAT"}</span>` : ""}
+                <button class="novel-fav ${likedNovels.includes(novel.id) ? "liked" : ""}" onclick="event.stopPropagation(); toggleLike(${novel.id}, this)">
+                    ${likedNovels.includes(novel.id) ? "❤️" : "🤍"}
+                </button>
+                <div class="novel-cover-overlay">
+                    <button class="read-btn-overlay">Baca Sekarang</button>
+                </div>
+            </div>
+            <div class="novel-info">
+                <div class="novel-genre">${novel.genre}</div>
+                <div class="novel-title">${novel.title}</div>
+                <div class="novel-meta">
+                    <span class="novel-meta-item novel-rating">⭐ ${novel.rating}</span>
+                    <span class="novel-meta-item">👁 ${novel.readers}</span>
+                </div>
+            </div>
+        </div>
+    `,
+    )
+    .join("");
+}
+
+function renderPopularScroll() {
+  const sorted = [...novelsData].sort(
+    (a, b) => parseFloat(b.readers) - parseFloat(a.readers),
+  );
+  document.getElementById("popularScroll").innerHTML = sorted
+    .slice(0, 5)
+    .map(
+      (novel, i) => `
+        <div class="popular-card" onclick="showDetail(${novel.id})">
+            <div class="popular-rank">#${i + 1}</div>
+            <div class="popular-cover" style="background: ${novel.gradient}">${novel.emoji}</div>
+            <div class="popular-info">
+                <h4>${novel.title}</h4>
+                <p>${novel.synopsis}</p>
+                <div class="popular-stats">
+                    <span>⭐ ${novel.rating}</span>
+                    <span>👁 ${novel.readers}</span>
+                    <span>📝 ${novel.chapters} Ch</span>
+                </div>
+            </div>
+        </div>
+    `,
+    )
+    .join("");
+}
+
+function renderPopularFull() {
+  const sorted = [...novelsData].sort(
+    (a, b) => parseFloat(b.readers) - parseFloat(a.readers),
+  );
+  document.getElementById("popularFullList").innerHTML = sorted
+    .map(
+      (novel, i) => `
+        <div class="popular-card" onclick="showDetail(${novel.id})" style="margin-bottom: 12px;">
+            <div class="popular-rank">#${i + 1}</div>
+            <div class="popular-cover" style="background: ${novel.gradient}">${novel.emoji}</div>
+            <div class="popular-info">
+                <h4>${novel.title}</h4>
+                <p>${novel.synopsis}</p>
+                <div class="popular-stats">
+                    <span>⭐ ${novel.rating}</span>
+                    <span>👁 ${novel.readers}</span>
+                    <span>📝 ${novel.chapters} Ch</span>
+                    <span>🏷 ${novel.genre}</span>
+                </div>
+            </div>
+        </div>
+    `,
+    )
+    .join("");
+}
+
+function renderGenrePage() {
+  const genres = ["Fantasi", "Action", "Romance", "Mystery", "Sci-Fi"];
+  document.getElementById("genreTabs").innerHTML = genres
+    .map(
+      (g) =>
+        `<button class="category-tab ${g === "Fantasi" ? "active" : ""}" onclick="filterGenre('${g}', this)">${g}</button>`,
+    )
+    .join("");
+  renderGenreGrid("Fantasi");
+}
+
+function filterGenre(genre, btn) {
+  document
+    .querySelectorAll("#genreTabs .category-tab")
+    .forEach((t) => t.classList.remove("active"));
+  btn.classList.add("active");
+  renderGenreGrid(genre);
+}
