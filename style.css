@@ -1774,3 +1774,97 @@ body {
 .sidebar-menu.active {
   left: 0;
 }
+
+/* Header Sidebar - Simple tanpa tombol close */
+.sidebar-header {
+  padding: 24px 24px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-header .nav-logo-text {
+  font-size: 1.3rem; /* Sedikit lebih besar */
+}
+
+/* Konten Sidebar */
+.sidebar-content {
+  padding: 10px 0;
+  flex: 1;
+  overflow-y: auto;
+}
+.sidebar-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 12px 24px;
+}
+
+/* Link & Button di Sidebar */
+.sidebar-btn,
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 24px;
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 500;
+  font-size: 1rem;
+  transition: var(--transition);
+  cursor: pointer;
+  background: none;
+  border: none;
+  text-align: left;
+}
+.sidebar-btn:hover,
+.sidebar-link:hover {
+  background: rgba(108, 92, 231, 0.1);
+  color: var(--primary);
+  padding-left: 28px; /* Efek geser sedikit saat hover */
+}
+.btn-icon {
+  font-size: 1.2rem;
+  width: 26px;
+  text-align: center;
+}
+
+/* Tombol Kembali Spesial */
+.sidebar-btn.primary-btn {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  margin: 12px 16px;
+  width: calc(100% - 32px);
+  border-radius: 14px;
+  font-weight: 700;
+  padding: 16px;
+  box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+}
+.sidebar-btn.primary-btn:hover {
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(108, 92, 231, 0.5);
+}
+
+/* Tombol Kembali Spesial */
+.sidebar-btn.primary-btn {
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  color: white;
+  margin: 10px 16px 16px;
+  width: calc(100% - 32px);
+  border-radius: 12px;
+  font-weight: 700;
+}
+.sidebar-btn.primary-btn:hover {
+  background: linear-gradient(135deg, var(--primary-dark), var(--accent-dark));
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
+}
+
+/* Responsif: Sembunyikan link navbar jika layar < 900px agar tidak penuh */
+@media (max-width: 900px) {
+  .nav-links {
+    display: none;
+  }
+  .sidebar-menu {
+    width: 280px;
+  }
+}
