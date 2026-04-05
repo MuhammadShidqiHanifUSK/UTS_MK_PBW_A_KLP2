@@ -28,3 +28,43 @@
   --reader-line: 1.9;
   --reader-size: 18px;
 }
+
+.dark-mode {
+  --bg: #0a0a1a;
+  --bg-card: #151528;
+  --bg-nav: rgba(15, 15, 30, 0.95);
+  --text: #e0e0e0;
+  --text-light: #a0a0b0;
+  --text-lighter: #555566;
+  --border: #252540;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --shadow-hover: 0 8px 30px rgba(108, 92, 231, 0.3);
+  --reader-bg: #1a1a2e;
+  --reader-text: #c8c8d8;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  transition: var(--transition);
+  overflow-x: hidden;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--primary-light);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+
