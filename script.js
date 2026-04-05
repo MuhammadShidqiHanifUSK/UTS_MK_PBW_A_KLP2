@@ -330,3 +330,62 @@ function filterGenre(genre, btn) {
   btn.classList.add("active");
   renderGenreGrid(genre);
 }
+
+function renderGenreGrid(genre) {
+  const filtered = novelsData.filter((n) => n.genre === genre);
+  document.getElementById("genreGrid").innerHTML = filtered
+    .map(
+      (novel, i) => `
+        <div class="novel-card fade-in stagger-${(i % 5) + 1}" onclick="showDetail(${novel.id})">
+            <div class="novel-cover">
+                <div class="novel-cover-img" style="background: ${novel.gradient}">${novel.emoji}</div>
+                ${novel.badge ? `<span class="novel-badge badge-${novel.badge}">${novel.badge === "hot" ? "🔥 HOT" : novel.badge === "new" ? "✨ NEW" : "✅ TAMAT"}</span>` : ""}
+                <button class="novel-fav ${likedNovels.includes(novel.id) ? "liked" : ""}" onclick="event.stopPropagation(); toggleLike(${novel.id}, this)">
+                    ${likedNovels.includes(novel.id) ? "❤️" : "🤍"}
+                </button>
+                <div class="novel-cover-overlay">
+                    <button class="read-btn-overlay">Baca Sekarang</button>
+                </div>
+            </div>
+            <div class="novel-info">
+                <div class="novel-genre">${novel.genre}</div>
+                <div class="novel-title">${novel.title}</div>
+                <div class="novel-meta">
+                    <span class="novel-meta-item novel-rating">⭐ ${novel.rating}</span>
+                    <span class="novel-meta-item">👁 ${novel.readers}</span>
+                </div>
+            </div>
+        </div>
+    `,
+    )
+    .join("");
+}
+
+// Navigasi Cerdas untuk Tombol Kembali
+function goBack() {
+  const currentPage = document
+    .querySelector(".page.active")
+    ?.id?.replace("page-", "");
+
+  if (currentPage === "reader") {
+    showPage("detail");
+  } else if (currentPage === "detail") {
+    showPage("home");
+  } else {
+    showPage("home");
+  }
+}
+
+function toggleSidebarMenu() {
+  const menu = document.getElementById("sidebarMenu");
+  const overlay = document.getElementById("sidebarOverlay");
+  const btn = document.getElementById("menuToggle");
+  const isActive = menu.classList.contains("active");
+
+  menu.classList.toggle("active", !isActive);
+  overlay.classList.toggle("active", !isActive);
+  btn.classList.toggle("active", !isActive);
+
+  // Stop scroll body saat sidebar terbuka
+  document.body.style.overflow = isActive ? "" : "hidden";
+}
