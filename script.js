@@ -501,5 +501,32 @@ function startReading(novelId, chapterId) {
             </button>
         </div>
     `;
+  renderComments(novelId, chapterId);
+  showPage("reader");
+  window.scrollTo({ top: 0 });
+
+  setTimeout(() => {
+    const contentEl = document.getElementById("readerContent");
+    const update = () => {
+      if (!contentEl) return;
+      const rect = contentEl.getBoundingClientRect();
+      const progress = Math.min(
+        100,
+        Math.max(0, ((window.innerHeight - rect.top) / rect.height) * 100),
+      );
+      document.getElementById("readerProgressBar").style.width = progress + "%";
+    };
+    window.addEventListener("scroll", update);
+    update();
+  }, 100);
+}
+
+function prevChapter(novelId) {
+  if (currentChapter > 1) startReading(novelId, currentChapter - 1);
+}
+function nextChapter(novelId) {
+  if (currentChapter < currentNovel.chapterList.length)
+    startReading(novelId, currentChapter + 1);
+}
 
 
