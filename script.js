@@ -111,3 +111,22 @@ const novelsData = [
     ],
   },
 ];
+// Chapter Content Generator
+function generateChapterContent(novelId, chapterId) {
+  const novel = novelsData[novelId];
+  const chData = novel.chapterList[chapterId - 1];
+  const title = chData ? chData.title : `Chapter ${chapterId}`;
+  const date = chData ? chData.date : "Januari 2026";
+
+  return {
+    title: `Chapter ${chapterId}: ${title}`,
+    date: date,
+    text: [
+      `${novel.title} berlanjut dengan petualangan yang semakin seru di chapter ini. Setiap halaman membawa pembaca lebih dalam ke dalam dunia yang penuh misteri.`,
+      '"Kita harus terus maju," kata sang protagonis kepada rekan-rekannya. "Tidak peduli seberapa gelap jalannya, kita tidak bisa berhenti di sini."',
+      "Rekan-rekannya mengangguk, meskipun ketakutan terlihat di mata mereka. Mereka tahu bahwa apa yang menanti di depan jauh lebih berbahaya dari yang mereka bayangkan. Tapi mereka juga tahu bahwa bersama-sama, mereka bisa menghadapi apapun.",
+      "Dengan tekad yang membara, mereka melangkah maju menuju ketidakpastian, siap menghadapi apapun yang menanti di balik kabut yang menyelimuti perjalanan mereka. Angin berhembus kencang, membawa aroma petualangan baru yang tak terduga.",
+      'Dan di balik bayangan pepohonan, sosok misterius itu mengamati langkah mereka. Senyum tipis mengembang di bibirnya. "Akhirnya, mereka datang," bisiknya pelan, sebelum menghilang ke dalam kegelapan.',
+    ],
+  };
+}
