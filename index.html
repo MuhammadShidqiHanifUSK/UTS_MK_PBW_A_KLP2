@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NovelKu - Baca Novel Online</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- LOADING SCREEN -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="loader"></div>
+      <div class="loading-text">Memuat NovelKu...</div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-container">
+        <!-- HAMBURGER MENU (Selalu Muncul Desktop & Mobile) -->
+        <button
+          class="menu-toggle"
+          id="menuToggle"
+          onclick="toggleSidebarMenu()"
+          aria-label="Menu"
+        >
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="nav-logo" onclick="showPage('home')">
+          <div class="nav-logo-icon">📖</div>
+          <span class="nav-logo-text">NovelKu</span>
+        </div>
+
+        <ul class="nav-links">
+          <li>
+            <a class="active" onclick="showPage('home')" id="nav-home"
+              >Beranda</a
+            >
+          </li>
+          <li><a onclick="showPage('popular')" id="nav-popular">Populer</a></li>
+          <li><a onclick="showPage('genre')" id="nav-genre">Genre</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <button
+            class="search-toggle"
+            onclick="toggleSearch()"
+            title="Cari Novel"
+          >
+            🔍
+          </button>
+          <button
+            class="theme-toggle"
+            onclick="toggleTheme()"
+            title="Mode Gelap/Terang"
+            id="themeBtn"
+          >
+            🌙
+          </button>
+          <button
+            class="bookmark-toggle"
+            onclick="toggleBookmarkPanel()"
+            title="Bookmark"
+          >
+            🔖<span class="bookmark-badge" id="bookmarkCount">0</span>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- SIDEBAR MENU (Versi Simple) -->
+    <div
+      class="sidebar-overlay"
+      id="sidebarOverlay"
+      onclick="toggleSidebarMenu()"
+    ></div>
+    <div class="sidebar-menu" id="sidebarMenu">
+      <div class="sidebar-header">
+        <!-- Hanya Judul, Tombol X dihapus biar gak dobel -->
+        <span class="nav-logo-text">📖 Navigasi</span>
+      </div>
+      <div class="sidebar-content">
+        <!-- TOMBOL KEMBALI (Tetap ada karena penting) -->
+        <button
+          class="sidebar-btn primary-btn"
+          onclick="
+            goBack();
+            toggleSidebarMenu();
+          "
+        >
+          <span class="btn-icon">←</span> Kembali
+        </button>
+
+        <div class="sidebar-divider"></div>
+        <a
+          class="sidebar-link"
+          onclick="
+            showPage('home');
+            toggleSidebarMenu();
+          "
+          >🏠 Beranda</a
+        >
+        <a
+          class="sidebar-link"
+          onclick="
+            showPage('popular');
+            toggleSidebarMenu();
+          "
+          >🔥 Populer</a
+        >
+        <a
+          class="sidebar-link"
+          onclick="
+            showPage('genre');
+            toggleSidebarMenu();
+          "
+          >🎭 Genre</a
+        >
+        <div class="sidebar-divider"></div>
+        <button
+          class="sidebar-btn"
+          onclick="
+            toggleTheme();
+            toggleSidebarMenu();
+          "
+        >
+          <span class="btn-icon">🌓</span> Mode Gelap / Terang
+        </button>
+      </div>
+    </div>
+
+    <!-- SEARCH OVERLAY -->
+    <div class="search-overlay" id="searchOverlay" onclick="closeSearch(event)">
+      <div class="search-box" onclick="event.stopPropagation()">
+        <div class="search-input-wrapper">
+          <span>🔍</span>
+          <input
+            type="text"
+            class="search-input"
+            id="searchInput"
+            placeholder="Cari novel atau penulis..."
+            oninput="handleSearch(this.value)"
+          />
+        </div>
+        <div class="search-results" id="searchResults"></div>
+      </div>
+    </div>
+
+    <!-- BOOKMARK PANEL -->
+    <div
+      class="overlay-bg"
+      id="overlayBg"
+      onclick="toggleBookmarkPanel()"
+    ></div>
+    <div class="bookmark-panel" id="bookmarkPanel">
+      <div class="bookmark-panel-header">
+        <h3>🔖 Bookmark</h3>
+        <button class="bookmark-close" onclick="toggleBookmarkPanel()">
+          ✕
+        </button>
+      </div>
+      <div class="bookmark-list" id="bookmarkList">
+        <div class="bookmark-empty">
+          <span>📚</span>
+          <p>Belum ada bookmark</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- PAGE: HOME -->
+    <div class="page active" id="page-home">
+      <div class="main-content">
+        <div class="hero">
+          <div class="hero-banner">
+            <div class="hero-content">
+              <div class="hero-text">
+                <span class="hero-badge">✨ Selamat Datang di NovelKu</span>
+                <h1>Baca Novel Favoritmu Kapanpun & Dimanapun</h1>
+                <p>
+                  Jelajahi ribuan novel dari berbagai genre. Baca gratis dengan
+                  pengalaman membaca yang nyaman dan menyenangkan.
+                </p>
+                <button class="hero-btn" onclick="showPage('popular')">
+                  Mulai Membaca →
+                </button>
+              </div>
+              <div class="hero-featured">
+                <div class="hero-featured-covers">
+                  <div class="hero-featured-cover" onclick="showDetail(0)">
+                    🏰
+                  </div>
+                  <div class="hero-featured-cover" onclick="showDetail(1)">
+                    ⚔️
+                  </div>
+                  <div class="hero-featured-cover" onclick="showDetail(2)">
+                    🌸
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="stats-bar">
+          <div class="stat-card fade-in stagger-1">
+            <div class="stat-icon">📚</div>
+            <div class="stat-number">1,250+</div>
+            <div class="stat-label">Total Novel</div>
+          </div>
+          <div class="stat-card fade-in stagger-2">
+            <div class="stat-icon">📝</div>
+            <div class="stat-number">45,000+</div>
+            <div class="stat-label">Total Chapter</div>
+          </div>
+          <div class="stat-card fade-in stagger-3">
+            <div class="stat-icon">👥</div>
+            <div class="stat-number">120K+</div>
+            <div class="stat-label">Pembaca Aktif</div>
+          </div>
+          <div class="stat-card fade-in stagger-4">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-number">4.8</div>
+            <div class="stat-label">Rating Rata-rata</div>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title"><span>🔥</span> Sedang Populer</h2>
+              <p class="section-subtitle">
+                Novel yang paling banyak dibaca minggu ini
+              </p>
+            </div>
+            <a class="view-all" onclick="showPage('popular')">Lihat Semua →</a>
+          </div>
+          <div class="popular-scroll" id="popularScroll"></div>
+        </div>
+        <div class="section">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title"><span>📚</span> Semua Novel</h2>
+              <p class="section-subtitle">
+                Temukan novel sesuai genre favoritmu
+              </p>
+            </div>
+          </div>
+          <div class="category-tabs" id="categoryTabs"></div>
+          <div class="novel-grid" id="novelGrid"></div>
+        </div>
+        <footer class="footer">
+          <div class="footer-logo">📖 NovelKu</div>
+          <p>Platform baca novel online terbaik di Indonesia</p>
+          <div class="footer-links">
+            <a href="#">Tentang Kami</a><a href="#">Kebijakan Privasi</a
+            ><a href="#">Kontak</a><a href="#">FAQ</a>
+          </div>
+          <p style="margin-top: 16px; font-size: 0.8rem">
+            © 2026 NovelKu. All rights reserved.
+          </p>
+        </footer>
+      </div>
+    </div>
+
+    <!-- PAGE: POPULAR -->
+    <div class="page" id="page-popular">
+      <div class="main-content">
+        <div class="section" style="padding-top: 2rem">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title"><span>🏆</span> Novel Terpopuler</h2>
+              <p class="section-subtitle">
+                Ranking berdasarkan jumlah pembaca dan rating
+              </p>
+            </div>
+          </div>
+          <div id="popularFullList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: GENRE -->
+    <div class="page" id="page-genre">
+      <div class="main-content">
+        <div class="section" style="padding-top: 2rem">
+          <div class="section-header">
+            <div>
+              <h2 class="section-title"><span>🎭</span> Jelajahi Genre</h2>
+              <p class="section-subtitle">Pilih genre favoritmu</p>
+            </div>
+          </div>
+          <div class="category-tabs" id="genreTabs"></div>
+          <div class="novel-grid" id="genreGrid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAGE: DETAIL -->
+    <div class="page" id="page-detail">
+      <div class="main-content">
+        <div class="detail-hero" id="detailHero"></div>
+        <div class="chapter-section" id="chapterSection"></div>
+      </div>
+    </div>
+
+    <!-- PAGE: READER -->
+    <div class="page" id="page-reader">
+      <div class="main-content">
+        <div class="reader-container" id="readerContainer"></div>
+        <div class="comment-section" id="commentSection"></div>
+      </div>
+    </div>
+
+    <!-- READER SETTINGS PANEL -->
+    <div class="reader-settings-panel" id="readerSettingsPanel">
+      <div class="settings-grid">
+        <div class="setting-group">
+          <h4>Ukuran Font</h4>
+          <div class="font-size-control">
+            <button onclick="changeFontSize(-1)">A-</button>
+            <span id="fontSizeDisplay">18px</span>
+            <button onclick="changeFontSize(1)">A+</button>
+          </div>
+        </div>
+        <div class="setting-group">
+          <h4>Jenis Font</h4>
+          <div class="font-family-options">
+            <button
+              class="font-option active"
+              style="font-family: Georgia, serif"
+              onclick="changeFontFamily('Georgia, serif', this)"
+            >
+              Serif
+            </button>
+            <button
+              class="font-option"
+              style="font-family: &quot;Segoe UI&quot;, sans-serif"
+              onclick="changeFontFamily('Segoe UI, sans-serif', this)"
+            >
+              Sans
+            </button>
+            <button
+              class="font-option"
+              style="font-family: &quot;Courier New&quot;, monospace"
+              onclick="changeFontFamily('Courier New, monospace', this)"
+            >
+              Mono
+            </button>
+          </div>
+        </div>
+        <div class="setting-group">
+          <h4>Tema Baca</h4>
+          <div class="theme-options">
+            <div
+              class="theme-option theme-option-light active"
+              onclick="changeReaderTheme('#fffef5', '#333333', this)"
+              title="Terang"
+            ></div>
+            <div
+              class="theme-option theme-option-sepia"
+              onclick="changeReaderTheme('#f4ecd8', '#5c4b37', this)"
+              title="Sepia"
+            ></div>
+            <div
+              class="theme-option theme-option-dark"
+              onclick="changeReaderTheme('#1a1a2e', '#c8c8d8', this)"
+              title="Gelap"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js" defer></script>
+  </body>
+</html>
